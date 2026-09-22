@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Time Value of Money & DCF Valuation</title>
+  
+  <!-- MathJax for rendering formulas cleanly -->
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    :root {
+      --primary: #1e3a8a;
+      --primary-light: #3b82f6;
+      --accent: #10b981;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --border: #cbd5e1;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 2rem 1.5rem;
+    }
+
+    header {
+      max-width: 1400px;
+      margin: 0 auto 2rem auto;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 2.2rem;
+      color: var(--primary);
+      margin-bottom: 0.25rem;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+    }
+
+    .author-credit {
+      margin-top: 0.5rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--primary-light);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Tab Navigation */
+    .tabs-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      max-width: 1400px;
+      margin: 0 auto 2rem auto;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 0.5rem;
+      justify-content: center;
+    }
+
+    .tab-btn {
+      background: #e2e8f0;
+      border: none;
+      padding: 0.75rem 1.25rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn:hover {
+      background-color: #cbd5e1;
+      color: var(--primary);
+    }
+
+    .tab-btn.active {
+      background-color: var(--primary);
+      color: #ffffff;
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Vertical Layout */
+    .vertical-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+    }
+
+    .card h3 {
+      color: var(--primary);
+      font-size: 1.3rem;
+      margin-bottom: 0.75rem;
+      border-bottom: 2px solid #eff6ff;
+      padding-bottom: 0.4rem;
+    }
+
+    .formula-box {
+      background-color: #f1f5f9;
+      border-left: 4px solid var(--primary-light);
+      padding: 1rem;
+      border-radius: 4px;
+      margin-bottom: 1rem;
+      text-align: center;
+      font-size: 1.15rem;
+    }
+
+    /* Accordion / Dropdown */
+    details {
+      background-color: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-top: 1rem;
+      overflow: hidden;
+      transition: all 0.2s ease;
+    }
+
+    details[open] {
+      background-color: #ffffff;
+      border-color: var(--primary-light);
+    }
+
+    summary {
+      padding: 0.85rem 1.25rem;
+      font-weight: 600;
+      color: var(--primary);
+      cursor: pointer;
+      background-color: #f0f9ff;
+      user-select: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    summary:hover {
+      background-color: #e0f2fe;
+    }
+
+    .details-content {
+      padding: 1.25rem;
+      border-top: 1px solid var(--border);
+    }
+
+    /* Timelines */
+    .timeline-container {
+      margin: 1.25rem 0;
+      text-align: center;
+      background: #fafafa;
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px dashed var(--border);
+      overflow-x: auto;
+    }
+
+    .timeline-title {
+      font-size: 0.85rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .timeline-svg {
+      width: 100%;
+      min-width: 600px;
+      height: 95px;
+    }
+
+    /* Calculator Inputs */
+    .calc-inputs {
+      display: flex;
+      gap: 1rem;
+      margin-top: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      font-size: 0.85rem;
+    }
+
+    .input-group label {
+      color: var(--text-muted);
+      margin-bottom: 0.2rem;
+      font-weight: 500;
+    }
+
+    .input-group input, .input-group select {
+      padding: 0.45rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      width: 150px;
+    }
+
+    .calc-result {
+      margin-top: 1rem;
+      padding: 0.75rem 1rem;
+      background-color: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      border-radius: 6px;
+      font-weight: bold;
+      color: #065f46;
+      font-size: 0.95rem;
+    }
+
+    /* Dynamic Amortization Table */
+    .table-container {
+      margin-top: 1rem;
+      max-height: 400px;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      text-align: right;
+    }
+
+    th, td {
+      padding: 0.6rem 0.8rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      background-color: #f1f5f9;
+      color: var(--primary);
+      position: sticky;
+      top: 0;
+      font-weight: 600;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f8fafc;
+    }
+
+    tr:hover {
+      background-color: #e2e8f0;
+    }
+
+    td:first-child, th:first-child {
+      text-anchor: center;
+      text-align: center;
+    }
+
+    footer {
+      max-width: 1400px;
+      margin: 3rem auto 1rem auto;
+      text-align: center;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Valuation: Time Value of Money & DCF Valuation</h1>
+    <p>Formulas Presentation & Interactive Dashboards</p>
+    <div class="author-credit">Developed by Adrián R. Cecotto</div>
+  </header>
+
+  <!-- Navigation Tabs -->
+  <nav class="tabs-nav">
+    <button class="tab-btn active" onclick="switchTab('simple-compound')">Simple & Compound Interest</button>
+    <button class="tab-btn" onclick="switchTab('rates')">Nominal, Effective & Continuous Rates</button>
+    <button class="tab-btn" onclick="switchTab('annuities')">Ordinary Annuities & Cash Flows</button>
+    <button class="tab-btn" onclick="switchTab('advanced-annuities')">Annuities Due, Perpetuities & Growth</button>
+    <button class="tab-btn" onclick="switchTab('solving-loan')">Solving for t/r & Loan Amortization</button>
+  </nav>
+
+  <main class="container">
+
+    <!-- TAB 1: SIMPLE & COMPOUND INTEREST -->
+    <div id="simple-compound" class="tab-content active">
+      <div class="vertical-stack">
+        
+        <!-- 1. Simple Interest (Interest Amount) -->
+        <div class="card">
+          <h3>1. Simple Interest: Calculating Interest Earned</h3>
+          <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+            Interest is calculated strictly on the original principal ($P$) for each time period[cite: 1].
+          </p>
+          <div class="formula-box">
+            $$I = P \times r \times t$$
+          </div>
+
+          <details class="acc-item">
+            <summary>Interactive Example: Calculate Interest Earned & Future Value</summary>
+            <div class="details-content">
+              <div class="calc-inputs">
+                <div class="input-group">
+                  <label>Principal ($P$)</label>
+                  <input type="number" id="simple-p" value="1000" oninput="calcSimple()">
+                </div>
+                <div class="input-group">
+                  <label>Annual Rate % ($r$)</label>
+                  <input type="number" id="simple-r" value="10" oninput="calcSimple()">
+                </div>
+                <div class="input-group">
+                  <label>Years ($t$)</label>
+                  <input type="number" id="simple-t" value="3" min="1" max="60" oninput="calcSimple()">
+                </div>
+              </div>
+
+              <!-- Dynamic Timeline -->
+              <div class="timeline-container">
+                <div class="timeline-title">Dynamic Timeline (Simple Interest)</div>
+                <svg id="simple-timeline" class="timeline-svg" viewBox="0 0 1200 90"></svg>
+              </div>
+
+              <div class="calc-result" id="simple-output"></div>
+            </div>
+          </details>
+        </div>
+
+        <!-- 2. Simple Interest (Future Value) -->
+        <div class="card">
+          <h3>2. Simple Interest: Calculating Total Future Value</h3>
+          <div class="formula-box">
+            $$FV = P \times (1 + r \times t) \quad \implies \quad P = \frac{FV}{1 + r \times t}$$
+          </div>
+          
+          <details class="acc-item">
+            <summary>Interactive Example: Solve for Required Initial Principal</summary>
+            <div class="details-content">
+              <div class="calc-inputs">
+                <div class="input-group">
+                  <label>Target Value ($FV$)</label>
+                  <input type="number" id="simple-fv-target" value="1500" oninput="calcSimplePV()">
+                </div>
+                <div class="input-group">
+                  <label>Annual Rate % ($r$)</label>
+                  <input type="number" id="simple-pv-r" value="6" oninput="calcSimplePV()">
+                </div>
+                <div class="input-group">
+                  <label>Years ($t$)</label>
+                  <input type="number" id="simple-pv-t" value="4" oninput="calcSimplePV()">
+                </div>
+              </div>
+              <div class="calc-result" id="simple-pv-output"></div>
+            </div>
+          </details>
+        </div>
+
+        <!-- 3. Compound Interest (Future Value) -->
+        <div class="card">
+          <h3>3. Compound Interest: Future Value</h3>
+          <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+            Interest earned is reinvested to generate additional interest in subsequent periods[cite: 1].
+          </p>
+          <div class="formula-box">
+            $$FV = PV \times (1 + r)^n$$
+          </div>
+
+          <details class="acc-item">
+            <summary>Interactive Example: Dynamic Compound FV with Timeline</summary>
+            <div class="details-content">
+              <div class="calc-inputs">
+                <div class="input-group">
+                  <label>Present Value ($PV$)</label>
+                  <input type="number" id="comp-pv" value="1000" oninput="calcCompound()">
+                </div>
+                <div class="input-group">
+                  <label>Rate % per Period ($r$)</label>
+                  <input type="number" id="comp-r" value="10" oninput="calcCompound()">
+                </div>
+                <div class="input-group">
+                  <label>Periods ($n$)</label>
+                  <input type="number" id="comp-n" value="3" min="1" max="60" oninput="calcCompound()">
+                </div>
+              </div>
+
+              <!-- Dynamic Timeline -->
+              <div class="timeline-container">
+                <div class="timeline-title">Dynamic Timeline (Compound Interest)</div>
+                <svg id="compound-timeline" class="timeline-svg" viewBox="0 0 1200 90"></svg>
+              </div>
+
+              <div class="calc-result" id="comp-output"></div>
+            </div>
+          </details>
+        </div>
+
+        <!-- 4. Compound Interest (Present Value) -->
+        <div class="card">
+          <h3>4. Compound Interest: Present Value</h3>
+          <div class="formula-box">
+            $$PV = \frac{FV}{(1 + r)^n}$$
+          </div>
+
+          <details class="acc-item">
+            <summary>Interactive Example: Discounting a Future Lump Sum</summary>
+            <div class="details-content">
+              <div class="calc-inputs">
+                <div class="input-group">
+                  <label>Future Value ($FV$)</label>
+                  <input type="number" id="comp-pv-fv" value="5000" oninput="calcCompoundPV()">
+                </div>
+                <div class="input-group">
+                  <label>Discount Rate % ($r$)</label>
+                  <input type="number" id="comp-pv-r" value="8" oninput="calcCompoundPV()">
+                </div>
+                <div class="input-group">
+                  <label>Periods ($n$)</label>
+                  <input type="number" id="comp-pv-n" value="5" oninput="calcCompoundPV()">
+                </div>
+              </div>
+              <div class="calc-result" id="comp-pv-output"></div>
+            </div>
+          </details>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TAB 2: NOMINAL, EFFECTIVE & CONTINUOUS -->
+    <div id="rates" class="tab-content">
+      <div class="vertical-stack">
+
+        <!-- Periodic Rate and Number of Periods -->
+        <div class="card">
+          <h3>1. Periodic Interest Rate and Total Compounding Periods</h3>
+          <div class="formula-box">
+            $$r = \frac{i}{m}, \quad n = t \times m$$
+          </div>
+
+          <details class="acc-item">
+            <summary>Interactive Example: Periodic Conversion Calculator</summary>
+            <div class="details-content">
+              <div class="calc-inputs">
+                <div class="input-group">
+                  <label>Nominal Rate % ($i$)</label>
+                  <input type="number" id="conv-i" value="12" oninput="calcPeriodic()">
+                </div>
+                <div class="input-group">
+                  <label>Frequency ($m$)</label>
+                  <select id="conv-m" onchange="calcPeriodic()">
+                    <option value="2">Semiannual (2)</option>
+                    <option value="4">Quarterly (4)</option>
+                    <option value="6">Bimonthly (6)</option>
+                    <option value="12" selected>Monthly (12)</option>
+                    <option value="365">Daily (365)</option>
+                  </select>
+                </div>
+                <div class="input-group">
+                  <label>Years ($t$)</label>
+                  <input type="number" id="conv-t" value="2" oninput="calcPeriodic()">
+                </div>
+              </div>
+              <div class="calc-result" id="conv-output"></div>
+            </div>
+          </details>
+        </div>
+
+        <!-- Effective Annual Rate (EAR) -->
+        <div class="card">
+          <h3>2. Effective Annual Rate (EAR)</h3>
+          <div class="formula-box">
+            $$EAR = \left(1 + \frac{i}{m}\right)^m - 1$$
+          </div>
+
+          <details class="acc-item">
+            <summary>Interactive Example: Compare EAR by Compounding Frequency</summary>
+            <div class="details-content">
+              <div class="calc-inputs">
+                <div class="input-group">
+                  <label>Nominal Rate % ($i$)</label>
+                  <input type="number" id="ear-i" value="12" oninput="calcEAR()">
+                </div>
+                <div class="input-group">
+                  <label>Frequency ($m$)</label>
+                  <select id="ear-m" onchange="calcEAR()">
+                    <option value="2">Semiannual (2)</option>
+                    <option value="4">Quarterly (4)</option>
+                    <option value="6">Bimonthly (6)</option>
+                    <option value="12" selected>Monthly (12)</option>
+                    <option value="365">Daily (365)</option>
+                  </select>
+                </div>
+              </div>
+              <div class="calc-result" id="ear-output"></div>
+            </div>
+          </details>
+        </div>
+
+        <!-- Continuous Compounding -->
+        <div class="card">
+          <h3>3. Continuous Compounding</h3>
+          <div class="formula-box">
+            $$FV = PV \times e^{r \times t}, \quad PV = FV \times e^{-r \times t}$$
+          </div>
+
+          <details class="acc-item">
+            <summary>Interactive Example: Continuous Compounding Calculator</summary>
+            <div class="details-content">
+              <div class="calc-inputs">
+                <div class="input-group">
+                  <label>Present Value ($PV$)</label>
+                  <input type="number" id="cont-pv" value="2000" oninput="calcContinuous()">
+                </div>
+                <div class="input-group">
+                  <label>Continuous Rate % ($r$)</label>
+                  <input type="number" id="cont-r" value="7" oninput="calcContinuous()">
+                </div>
+                <div class="input-group">
+                  <label>Years ($t$)</label>
+                  <input type="number" id="cont-t" value="3" oninput="calcContinuous()">
+                </div>
+              </div>
+              <div class="calc-result" id="cont-output"></div>
+            </div>
+          </details>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TAB 3: ORDINARY ANNUITIES & CASH FLOWS -->
+    <div id="annuities" class="tab-content">
+      <div class="vertical-stack">
+
+        <!-- Present Value of Ordinary Annuity -->
+        <div class="card">
+          <h3>1. Present Value of an Ordinary Annuity</h3>
+          <div class="formula-box">
+            $$PV = PMT \times \left[\frac{1 - (1 + r)^{-n}}{r}\right]$$
+          </div>
+
+          <details class="acc-item">
+            <summary>Interactive Example: Present Value of End-of-Period Cash Flows</summary>
+            <div class="details-content">
+              <div class="calc-inputs">
+                <div class="input-group">
+                  <label>Payment ($PMT$)</label>
+                  <input type="number" id="ann-pv-pmt" value="500" oninput="calcAnnuityPV()">
+                </div>
+                <div class="input-group">
+                  <label>Rate % per Period ($r$)</label>
+                  <input type="number" id="ann-pv-r" value="6" oninput="calcAnnuityPV()">
+                </div>
+                <div class="input-group">
+                  <label>Periods ($n$)</label>
+                  <input type="number" id="ann-pv-n" value="4" oninput="calcAnnuityPV()">
+                </div>
+              </div>
+              <div class="calc-result" id="ann-pv-output"></div>
+            </div>
+          </details>
+        </div>
+
+        <!-- Future Value of Ordinary Annuity -->
+        <div class="card">
+          <h3>2. Future Value of an Ordinary Annuity / Sinking Fund</h3>
+          <div class="formula-box">
+            $$FV = PMT \times \left[\frac{(1 + r)^n - 1}{r}\right]$$
+          </div>
+
+          <details class="acc-item">
+            <summary>Interactive Example: Accumulated Savings Fund Calculator</summary>
+            <div class="details-content">
+              <div class="calc-inputs">
+                <div class="input-group">
+                  <label>Payment ($PMT$)</label>
+                  <input type="number" id="ann-fv-pmt" value="300" oninput="calcAnnuityFV()">
+                </div>
+                <div class="input-group">
+                  <label>Rate % per Period ($r$)</label>
+                  <input type="number" id="ann-fv-r" value="0.5" step="0.1" oninput="calcAnnuityFV()">
+                </div>
+                <div class="input-group">
+                  <label>Periods ($n$)</label>
+                  <input type="number" id="ann-fv-n" value="36" oninput="calcAnnuityFV()">
+                </div>
+              </div>
+              <div class="calc-result" id="ann-fv-output"></div>
+            </div>
+          </details>
+        </div>
+
+        <!-- Multiple Irregular Cash Flows & NPV -->
+        <div class="card">
+          <h3>3. Multiple Irregular Cash Flows & Net Present Value (NPV)</h3>
+          <div class="formula-box">
+            $$PV = \sum_{t=1}^{n} \frac{CF_t}{(1 + r)^t}, \quad NPV = CF_0 + \sum_{t=1}^{n} \frac{CF_t}{(1 + r)^t}$$
+          </div>
+
+          <details class="acc-item">
+            <summary>Interactive Example: Discounted Cash Flow & NPV Calculator</summary>
+            <div class="details-content">
+              <div class="calc-inputs">
+                <div class="input-group">
+                  <label>Initial Outflow ($CF_0$)</label>
+                  <input type="number" id="npv-cf0" value="-1000" oninput="calcNPV()">
+                </div>
+                <div class="input-group">
+                  <label>Cash Flow 1 ($CF_1$)</label>
+                  <input type="number" id="npv-cf1" value="400" oninput="calcNPV()">
+                </div>
+                <div class="input-group">
+                  <label>Cash Flow 2 ($CF_2$)</label>
+                  <input type="number" id="npv-cf2" value="500" oninput="calcNPV()">
+                </div>
+                <div class="input-group">
+                  <label>Cash Flow 3 ($CF_3$)</label>
+                  <input type="number" id="npv-cf3" value="600" oninput="calcNPV()">
+                </div>
+                <div class="input-group">
+                  <label>Discount Rate % ($r$)</label>
+                  <input type="number" id="npv-r" value="10" oninput="calcNPV()">
+                </div>
+              </div>
+              <div class="calc-result" id="npv-output"></div>
+            </div>
+          </details>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TAB 4: ANNUITIES DUE, PERPETUITIES & GROWTH -->
+    <div id="advanced-annuities" class="tab-content">
+      <div class="vertical-stack">
+
+        <!-- Annuities Due -->
+        <div class="card">
+          <h3>1. Annuities Due (Beginning-of-Period Payments)</h3>
+          <div class="formula-box">
+            $$PV_{\text{due}} = PV_{\text{ordinary}} \times (1 + r), \quad FV_{\text{due}} = FV_{\text{ordinary}} \times (1 + r)$$
+          </div>
+
+          <details class="acc-item">
+            <summary>Interactive Example: Annuity Due Valuation</summary>
+            <div class="details-content">
+              <div class="calc-inputs">
+                <div class="input-group">
+                  <label>Payment ($PMT$)</label>
+                  <input type="number" id="due-pmt" value="500" oninput="calcAnnuityDue()">
+                </div>
+                <div class="input-group">
+                  <label>Rate % per Period ($r$)</label>
+                  <input type="number" id="due-r" value="6" oninput="calcAnnuityDue()">
+                </div>
+                <div class="input-group">
+                  <label>Periods ($n$)</label>
+                  <input type="number" id="due-n" value="4" oninput="calcAnnuityDue()">
+                </div>
+              </div>
+              <div class="calc-result" id="due-output"></div>
+            </div>
+          </details>
+        </div>
+
+        <!-- Perpetuities -->
+        <div class="card">
+          <h3>2. Ordinary Perpetuity</h3>
+          <div class="formula-box">
+            $$PV = \frac{PMT}{r}$$
+          </div>
+
+          <details class="acc-item">
+            <summary>Interactive Example: Preferred Stock / Infinite Cash Flow Valuation</summary>
+            <div class="details-content">
+              <div class="calc-inputs">
+                <div class="input-group">
+                  <label>Perpetual Payment ($PMT$)</label>
+                  <input type="number" id="perp-pmt" value="80" oninput="calcPerpetuity()">
+                </div>
+                <div class="input-group">
+                  <label>Discount Rate % ($r$)</label>
+                  <input type="number" id="perp-r" value="10" oninput="calcPerpetuity()">
+                </div>
+              </div>
+              <div class="calc-result" id="perp-output"></div>
+            </div>
+          </details>
+        </div>
+
+        <!-- Growing Perpetuities & Annuities -->
+        <div class="card">
+          <h3>3. Growing Perpetuities & Growing Annuities</h3>
+          <div class="formula-box">
+            $$\text{Growing Perpetuity: } PV = \frac{PMT_1}{r - g}$$
+          </div>
+
+          <details class="acc-item">
+            <summary>Interactive Example: Constant Growth Valuation Model</summary>
+            <div class="details-content">
+              <div class="calc-inputs">
+                <div class="input-group">
+                  <label>First Payment ($PMT_1$)</label>
+                  <input type="number" id="gperp-pmt" value="100" oninput="calcGrowingPerp()">
+                </div>
+                <div class="input-group">
+                  <label>Discount Rate % ($r$)</label>
+                  <input type="number" id="gperp-r" value="8" oninput="calcGrowingPerp()">
+                </div>
+                <div class="input-group">
+                  <label>Growth Rate % ($g$)</label>
+                  <input type="number" id="gperp-g" value="3" oninput="calcGrowingPerp()">
+                </div>
+              </div>
+              <div class="calc-result" id="gperp-output"></div>
+            </div>
+          </details>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TAB 5: SOLVING FOR T/R & LOAN AMORTIZATION -->
+    <div id="solving-loan" class="tab-content">
+      <div class="vertical-stack">
+
+        <!-- Solving for Time (n) and Rate (r) -->
+        <div class="card">
+          <h3>1. Solving for Time ($n$) and Rate ($r$)</h3>
+          <div class="formula-box">
+            $$n = \frac{\ln(FV / PV)}{\ln(1 + r)}, \quad r = \left(\frac{FV}{PV}\right)^{\frac{1}{n}} - 1$$
+          </div>
+
+          <details class="acc-item">
+            <summary>Interactive Example: Solve for Required Time ($n$)</summary>
+            <div class="details-content">
+              <div class="calc-inputs">
+                <div class="input-group">
+                  <label>Present Value ($PV$)</label>
+                  <input type="number" id="solv-pv" value="1000" oninput="calcSolveN()">
+                </div>
+                <div class="input-group">
+                  <label>Target Value ($FV$)</label>
+                  <input type="number" id="solv-fv" value="2000" oninput="calcSolveN()">
+                </div>
+                <div class="input-group">
+                  <label>Interest Rate % ($r$)</label>
+                  <input type="number" id="solv-r" value="8" oninput="calcSolveN()">
+                </div>
+              </div>
+              <div class="calc-result" id="solv-output"></div>
+            </div>
+          </details>
+        </div>
+
+        <!-- Dynamic Loan Amortization Schedule -->
+        <div class="card">
+          <h3>2. Loan Amortization Dynamics & Schedule Table</h3>
+          <div class="formula-box">
+            $$PMT = PV \times \left[\frac{r_{\text{period}}}{1 - (1 + r_{\text{period}})^{-n_{\text{total}}}}\right]$$
+            $$\text{Interest}_t = \text{Beginning Balance}_t \times r_{\text{period}}, \quad \text{Principal}_t = PMT - \text{Interest}_t$$
+          </div>
+
+          <details class="acc-item" open>
+            <summary>Interactive Example: Dynamic Loan Amortization Schedule</summary>
+            <div class="details-content">
+              <div class="calc-inputs">
+                <div class="input-group">
+                  <label>Loan Amount ($PV$)</label>
+                  <input type="number" id="loan-amount" value="10000" oninput="calcAmortization()">
+                </div>
+                <div class="input-group">
+                  <label>Annual Rate % ($i$)</label>
+                  <input type="number" id="loan-rate" value="10" oninput="calcAmortization()">
+                </div>
+                <div class="input-group">
+                  <label>Term in Years ($t$)</label>
+                  <input type="number" id="loan-years" value="5" min="1" max="40" oninput="calcAmortization()">
+                </div>
+                <div class="input-group">
+                  <label>Payment Frequency</label>
+                  <select id="loan-freq" onchange="calcAmortization()">
+                    <option value="12" selected>Monthly (12/yr)</option>
+                    <option value="6">Bimonthly (6/yr)</option>
+                    <option value="4">Quarterly (4/yr)</option>
+                    <option value="2">Semiannual (2/yr)</option>
+                    <option value="1">Annual (1/yr)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="calc-result" id="loan-summary"></div>
+
+              <!-- Dynamic Schedule Table starting at Period 0 -->
+              <div class="table-container">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Period</th>
+                      <th>Beginning Balance</th>
+                      <th>Total Payment</th>
+                      <th>Interest Paid</th>
+                      <th>Principal Paid</th>
+                      <th>Ending Balance</th>
+                    </tr>
+                  </thead>
+                  <tbody id="amortization-table-body"></tbody>
+                </table>
+              </div>
+
+            </div>
+          </details>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <footer>
+    <p>Financial Analysis Tools & Dashboards — Designed & Created by Adrián R. Cecotto - All rights reserved</p>
+  </footer>
+
+  <script>
+    // Formatting Helpers
+    const fmtCurrency = (val) => '$' + Number(val).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const fmtPercent = (val) => Number(val).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%';
+    const fmtNumber = (val) => Number(val).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+    // Single Open Accordion Logic
+    document.addEventListener("DOMContentLoaded", () => {
+      const allDetails = document.querySelectorAll("details.acc-item");
+      allDetails.forEach((targetDetail) => {
+        targetDetail.addEventListener("click", () => {
+          allDetails.forEach((detail) => {
+            if (detail !== targetDetail) {
+              detail.removeAttribute("open");
+            }
+          });
+        });
+      });
+
+      // Run initial calculations
+      calcSimple();
+      calcSimplePV();
+      calcCompound();
+      calcCompoundPV();
+      calcPeriodic();
+      calcEAR();
+      calcContinuous();
+      calcAnnuityPV();
+      calcAnnuityFV();
+      calcNPV();
+      calcAnnuityDue();
+      calcPerpetuity();
+      calcGrowingPerp();
+      calcSolveN();
+      calcAmortization();
+    });
+
+    // Tab Switching Logic
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+
+      document.getElementById(tabId).classList.add('active');
+      event.currentTarget.classList.add('active');
+
+      if (window.MathJax) {
+        MathJax.typesetPromise();
+      }
+    }
+
+    // 1. Simple Interest Calculator
+    function calcSimple() {
+      const p = parseFloat(document.getElementById('simple-p').value) || 0;
+      const r = (parseFloat(document.getElementById('simple-r').value) || 0) / 100;
+      const t = parseInt(document.getElementById('simple-t').value) || 1;
+
+      const interest = p * r * t;
+      const fv = p + interest;
+
+      document.getElementById('simple-output').innerHTML = 
+        `Interest Earned ($I$): <strong>${fmtCurrency(interest)}</strong> &nbsp;|&nbsp; Total Future Value ($FV$): <strong>${fmtCurrency(fv)}</strong>`;
+
+      renderTimeline('simple-timeline', p, r, t, false);
+    }
+
+    // 2. Simple Interest PV Calculator
+    function calcSimplePV() {
+      const fv = parseFloat(document.getElementById('simple-fv-target').value) || 0;
+      const r = (parseFloat(document.getElementById('simple-pv-r').value) || 0) / 100;
+      const t = parseFloat(document.getElementById('simple-pv-t').value) || 0;
+
+      const p = fv / (1 + (r * t));
+      document.getElementById('simple-pv-output').innerHTML = 
+        `Required Present Value / Principal ($P$): <strong>${fmtCurrency(p)}</strong>`;
+    }
+
+    // 3. Compound Interest FV Calculator
+    function calcCompound() {
+      const pv = parseFloat(document.getElementById('comp-pv').value) || 0;
+      const r = (parseFloat(document.getElementById('comp-r').value) || 0) / 100;
+      const n = parseInt(document.getElementById('comp-n').value) || 1;
+
+      const fv = pv * Math.pow((1 + r), n);
+      const interest = fv - pv;
+
+      document.getElementById('comp-output').innerHTML = 
+        `Future Value ($FV$): <strong>${fmtCurrency(fv)}</strong> &nbsp;|&nbsp; Total Compound Interest: <strong>${fmtCurrency(interest)}</strong>`;
+
+      renderTimeline('compound-timeline', pv, r, n, true);
+    }
+
+    // 4. Compound Interest PV Calculator
+    function calcCompoundPV() {
+      const fv = parseFloat(document.getElementById('comp-pv-fv').value) || 0;
+      const r = (parseFloat(document.getElementById('comp-pv-r').value) || 0) / 100;
+      const n = parseFloat(document.getElementById('comp-pv-n').value) || 0;
+
+      const pv = fv / Math.pow((1 + r), n);
+      document.getElementById('comp-pv-output').innerHTML = 
+        `Required Present Value ($PV$): <strong>${fmtCurrency(pv)}</strong>`;
+    }
+
+    // 5. Periodic Rates
+    function calcPeriodic() {
+      const i = (parseFloat(document.getElementById('conv-i').value) || 0) / 100;
+      const m = parseInt(document.getElementById('conv-m').value) || 1;
+      const t = parseFloat(document.getElementById('conv-t').value) || 0;
+
+      const r = (i / m) * 100;
+      const n = t * m;
+
+      document.getElementById('conv-output').innerHTML = 
+        `Periodic Rate ($r$): <strong>${fmtPercent(r)}</strong> &nbsp;|&nbsp; Total Periods ($n$): <strong>${n.toLocaleString('en-US')}</strong>`;
+    }
+
+    // 6. EAR Calculator
+    function calcEAR() {
+      const i = (parseFloat(document.getElementById('ear-i').value) || 0) / 100;
+      const m = parseInt(document.getElementById('ear-m').value) || 1;
+
+      const ear = (Math.pow(1 + (i / m), m) - 1) * 100;
+      document.getElementById('ear-output').innerHTML = 
+        `Effective Annual Rate (EAR): <strong>${fmtPercent(ear)}</strong>`;
+    }
+
+    // 7. Continuous Compounding
+    function calcContinuous() {
+      const pv = parseFloat(document.getElementById('cont-pv').value) || 0;
+      const r = (parseFloat(document.getElementById('cont-r').value) || 0) / 100;
+      const t = parseFloat(document.getElementById('cont-t').value) || 0;
+
+      const fv = pv * Math.exp(r * t);
+      document.getElementById('cont-output').innerHTML = 
+        `Continuous Future Value ($FV$): <strong>${fmtCurrency(fv)}</strong>`;
+    }
+
+    // 8. Ordinary Annuity PV
+    function calcAnnuityPV() {
+      const pmt = parseFloat(document.getElementById('ann-pv-pmt').value) || 0;
+      const r = (parseFloat(document.getElementById('ann-pv-r').value) || 0) / 100;
+      const n = parseFloat(document.getElementById('ann-pv-n').value) || 0;
+
+      const pv = r === 0 ? pmt * n : pmt * ((1 - Math.pow(1 + r, -n)) / r);
+      document.getElementById('ann-pv-output').innerHTML = 
+        `Annuity Present Value ($PV$): <strong>${fmtCurrency(pv)}</strong>`;
+    }
+
+    // 9. Ordinary Annuity FV
+    function calcAnnuityFV() {
+      const pmt = parseFloat(document.getElementById('ann-fv-pmt').value) || 0;
+      const r = (parseFloat(document.getElementById('ann-fv-r').value) || 0) / 100;
+      const n = parseFloat(document.getElementById('ann-fv-n').value) || 0;
+
+      const fv = r === 0 ? pmt * n : pmt * ((Math.pow(1 + r, n) - 1) / r);
+      document.getElementById('ann-fv-output').innerHTML = 
+        `Annuity Future Value ($FV$): <strong>${fmtCurrency(fv)}</strong>`;
+    }
+
+    // 10. Multiple Cash Flows & NPV
+    function calcNPV() {
+      const cf0 = parseFloat(document.getElementById('npv-cf0').value) || 0;
+      const cf1 = parseFloat(document.getElementById('npv-cf1').value) || 0;
+      const cf2 = parseFloat(document.getElementById('npv-cf2').value) || 0;
+      const cf3 = parseFloat(document.getElementById('npv-cf3').value) || 0;
+      const r = (parseFloat(document.getElementById('npv-r').value) || 0) / 100;
+
+      const pvInflows = (cf1 / Math.pow(1 + r, 1)) + (cf2 / Math.pow(1 + r, 2)) + (cf3 / Math.pow(1 + r, 3));
+      const npv = cf0 + pvInflows;
+
+      document.getElementById('npv-output').innerHTML = 
+        `PV of Future Inflows: <strong>${fmtCurrency(pvInflows)}</strong> &nbsp;|&nbsp; Net Present Value (NPV): <strong>${fmtCurrency(npv)}</strong>`;
+    }
+
+    // 11. Annuity Due
+    function calcAnnuityDue() {
+      const pmt = parseFloat(document.getElementById('due-pmt').value) || 0;
+      const r = (parseFloat(document.getElementById('due-r').value) || 0) / 100;
+      const n = parseFloat(document.getElementById('due-n').value) || 0;
+
+      const pvOrdinary = r === 0 ? pmt * n : pmt * ((1 - Math.pow(1 + r, -n)) / r);
+      const pvDue = pvOrdinary * (1 + r);
+
+      document.getElementById('due-output').innerHTML = 
+        `Annuity Due PV: <strong>${fmtCurrency(pvDue)}</strong> (vs Ordinary PV: ${fmtCurrency(pvOrdinary)})`;
+    }
+
+    // 12. Perpetuity
+    function calcPerpetuity() {
+      const pmt = parseFloat(document.getElementById('perp-pmt').value) || 0;
+      const r = (parseFloat(document.getElementById('perp-r').value) || 0) / 100;
+
+      const pv = r === 0 ? 0 : pmt / r;
+      document.getElementById('perp-output').innerHTML = 
+        `Perpetuity Present Value ($PV$): <strong>${fmtCurrency(pv)}</strong>`;
+    }
+
+    // 13. Growing Perpetuity
+    function calcGrowingPerp() {
+      const pmt = parseFloat(document.getElementById('gperp-pmt').value) || 0;
+      const r = (parseFloat(document.getElementById('gperp-r').value) || 0) / 100;
+      const g = (parseFloat(document.getElementById('gperp-g').value) || 0) / 100;
+
+      if (r <= g) {
+        document.getElementById('gperp-output').innerHTML = `<span style="color:red;">Discount rate (r) must be greater than growth rate (g).</span>`;
+        return;
+      }
+
+      const pv = pmt / (r - g);
+      document.getElementById('gperp-output').innerHTML = 
+        `Growing Perpetuity Present Value ($PV$): <strong>${fmtCurrency(pv)}</strong>`;
+    }
+
+    // 14. Solve for Time (n)
+    function calcSolveN() {
+      const pv = parseFloat(document.getElementById('solv-pv').value) || 0;
+      const fv = parseFloat(document.getElementById('solv-fv').value) || 0;
+      const r = (parseFloat(document.getElementById('solv-r').value) || 0) / 100;
+
+      if (pv <= 0 || fv <= 0 || r <= 0) {
+        document.getElementById('solv-output').innerText = "Inputs must be positive values.";
+        return;
+      }
+
+      const n = Math.log(fv / pv) / Math.log(1 + r);
+      document.getElementById('solv-output').innerHTML = 
+        `Required Time ($n$): <strong>${fmtNumber(n)} periods / years</strong>`;
+    }
+
+    // 15. Dynamic Amortization Schedule Table (Multi-Frequency Support)
+    function calcAmortization() {
+      const pv = parseFloat(document.getElementById('loan-amount').value) || 0;
+      const annualRate = (parseFloat(document.getElementById('loan-rate').value) || 0) / 100;
+      const years = parseFloat(document.getElementById('loan-years').value) || 1;
+      const m = parseInt(document.getElementById('loan-freq').value) || 12;
+
+      const totalPeriods = Math.round(years * m);
+      const periodicRate = annualRate / m;
+
+      const pmt = periodicRate === 0 
+        ? pv / totalPeriods 
+        : pv * (periodicRate / (1 - Math.pow(1 + periodicRate, -totalPeriods)));
+
+      const totalRepayment = pmt * totalPeriods;
+      const totalInterest = totalRepayment - pv;
+
+      document.getElementById('loan-summary').innerHTML = 
+        `Payment per Period ($PMT$): <strong>${fmtCurrency(pmt)}</strong> &nbsp;|&nbsp; Periodic Rate: <strong>${fmtPercent(periodicRate * 100)}</strong> &nbsp;|&nbsp; Total Periods: <strong>${totalPeriods}</strong> &nbsp;|&nbsp; Total Interest: <strong>${fmtCurrency(totalInterest)}</strong>`;
+
+      const tbody = document.getElementById('amortization-table-body');
+      tbody.innerHTML = '';
+
+      // Period 0 Row
+      const row0 = document.createElement('tr');
+      row0.innerHTML = `
+        <td>0</td>
+        <td>-</td>
+        <td>-</td>
+        <td>-</td>
+        <td>-</td>
+        <td><strong>${fmtCurrency(pv)}</strong></td>
+      `;
+      tbody.appendChild(row0);
+
+      let balance = pv;
+
+      for (let period = 1; period <= totalPeriods; period++) {
+        const interestPaid = balance * periodicRate;
+        const principalPaid = pmt - interestPaid;
+        const endingBalance = Math.max(0, balance - principalPaid);
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${period}</td>
+          <td>${fmtCurrency(balance)}</td>
+          <td>${fmtCurrency(pmt)}</td>
+          <td>${fmtCurrency(interestPaid)}</td>
+          <td>${fmtCurrency(principalPaid)}</td>
+          <td>${fmtCurrency(endingBalance)}</td>
+        `;
+        tbody.appendChild(tr);
+
+        balance = endingBalance;
+      }
+    }
+
+    // Dynamic Timeline Renderer (Supports up to 60 periods cleanly)
+    function renderTimeline(svgId, initialVal, r, periods, isCompound) {
+      const svg = document.getElementById(svgId);
+      if (!svg) return;
+      svg.innerHTML = '';
+
+      const width = 1200;
+      const startX = 80;
+      const endX = width - 80;
+      const y = 45;
+
+      const mainLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      mainLine.setAttribute('x1', startX);
+      mainLine.setAttribute('y1', y);
+      mainLine.setAttribute('x2', endX);
+      mainLine.setAttribute('y2', y);
+      mainLine.setAttribute('stroke', '#94a3b8');
+      mainLine.setAttribute('stroke-width', '3');
+      svg.appendChild(mainLine);
+
+      // Determine step intervals if period count is large
+      let stepInterval = 1;
+      if (periods > 12) stepInterval = Math.ceil(periods / 10);
+
+      const step = (endX - startX) / periods;
+
+      for (let i = 0; i <= periods; i++) {
+        const cx = startX + (i * step);
+        const isMilestone = (i === 0 || i === periods || i % stepInterval === 0);
+
+        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('cx', cx);
+        circle.setAttribute('cy', y);
+        circle.setAttribute('r', isMilestone ? '6' : '3');
+        circle.setAttribute('fill', i === 0 ? '#1e3a8a' : (i === periods ? '#10b981' : '#3b82f6'));
+        svg.appendChild(circle);
+
+        if (isMilestone) {
+          const textT = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          textT.setAttribute('x', cx);
+          textT.setAttribute('y', y - 15);
+          textT.setAttribute('text-anchor', 'middle');
+          textT.setAttribute('font-size', '12');
+          textT.setAttribute('fill', '#1e293b');
+          textT.textContent = `t = ${i}`;
+          svg.appendChild(textT);
+
+          let currentVal = 0;
+          if (i === 0) {
+            currentVal = -initialVal;
+          } else if (isCompound) {
+            currentVal = initialVal * Math.pow(1 + r, i);
+          } else {
+            currentVal = initialVal + (initialVal * r * i);
+          }
+
+          const textVal = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          textVal.setAttribute('x', cx);
+          textVal.setAttribute('y', y + 25);
+          textVal.setAttribute('text-anchor', 'middle');
+          textVal.setAttribute('font-size', '11');
+          textVal.setAttribute('font-weight', i === 0 || i === periods ? 'bold' : 'normal');
+          textVal.setAttribute('fill', i === 0 ? '#1e3a8a' : '#166534');
+          textVal.textContent = (currentVal < 0 ? '-' : '') + '$' + Math.abs(currentVal).toLocaleString('en-US', { maximumFractionDigits: 0 });
+          svg.appendChild(textVal);
+        }
+      }
+    }
+  </script>
+</body>
+</html>
